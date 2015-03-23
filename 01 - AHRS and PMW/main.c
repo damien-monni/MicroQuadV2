@@ -105,31 +105,36 @@ int main(void){
 			servo[3] = 700;
 		}
 		
-		if(timeFromStartMs > 15000){
+		if(timeFromStartMs > 25000){
 			servo[0] = 700;
 			servo[1] = 700;
 			servo[2] = 700;
 			servo[3] = 700;
 		}
 		
-		if((timeFromStartMs > 7000) && (timeFromStartMs < 15000)){
+		if((timeFromStartMs > 7000) && (timeFromStartMs < 25000)){
 			if(AhrsCompute()){
 				
-				float pitchOk = ToDeg(pitch);
+				float pitchOk = ToDeg(pitch)*30.;
 		
-				if(pitchOk > 0.0){
+				/*if(pitchOk > 0.0){
 					PORTD |= 1<<PORTD0;
 				}
 				else{
 					PORTD = 0;
+				}*/
+				
+				PORTD ^= 1 << PORTD0;
+				
+				int servoValue = 800 + (pitchOk);
+				if(servoValue > 1100){
+					servoValue = 1100;
+				}
+				else if(servoValue < 800){
+					servoValue = 800;
 				}
 				
-				/*int servoValue = 800 + (pitchOk*10);
-				if(servoValue > 1200){
-					servoValue = 1200;
-				}
-				
-				servo[0] = servoValue;*/
+				servo[0] = servoValue;
 				
 			}
 		}

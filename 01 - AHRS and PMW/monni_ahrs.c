@@ -85,6 +85,8 @@ volatile uint32_t t0OvfCount = 0;
 uint8_t previousCount = 0;
 uint8_t pastCount = 0;
 
+uint16_t accelCount = 0;
+
 float constrain(float x, float a, float b){
 	if(x < a){
 		return a;
@@ -335,8 +337,9 @@ ISR(TIMER0_OVF_vect){
 void AhrsInit(){
 
 	//Accel initialisation
-	while(twiWriteOneByte(accelAdd, 0x21, 0x18) == 0); //CTRL2 = 0x18 => full scale +/-8g
-	while(twiWriteOneByte(accelAdd, 0x20, 0b01010111) == 0); //CTRL1 = 0b01010111 => 50Hz + 3 axis enable
+	while(twiWriteOneByte(accelAdd, 0x21, 0xD8) == 0); //CTRL2 = 0xD8 => full scale +/-8g and 50Hz anti alias filter
+	//while(twiWriteOneByte(accelAdd, 0x20, 0b01010111) == 0); //CTRL1 = 0b01010111 => 50Hz + 3 axis enable
+	while(twiWriteOneByte(accelAdd, 0x20, 0b01110111) == 0); //CTRL1 = 0b01110111 => 200Hz + 3 axis enable
 	
 	//Magneto initialisation
 	while(twiWriteOneByte(accelAdd, 0x24, 0b01100100) == 0); //CTRL5 = 0b01100100 => High resolution and 6.25Hz
@@ -400,6 +403,17 @@ uint8_t AhrsCompute(){
 	}
 
 	previousCount = actualCount;
+	
+	//Read accelerometer
+	while(twiReadMultipleBytes(accelAdd, 0x28, accelSplitedValues, 6) == 0);
+	AN[3] = ((accelSplitedValues[1] << 8) | (accelSplitedValues[0] & 0xff));
+	AN[4] = ((accelSplitedValues[3] << 8) | (accelSplitedValues[2] & 0xff));
+	AN[5] = ((accelSplitedValues[5] << 8) | (accelSplitedValues[4] & 0xff));
+	accel_x += SENSOR_SIGN[3] * (AN[3] - AN_OFFSET[3]);
+	accel_y += SENSOR_SIGN[4] * (AN[4] - AN_OFFSET[4]);
+	accel_z += SENSOR_SIGN[5] * (AN[5] - AN_OFFSET[5]);
+	
+	accelCount++;
 
 	//Run loop at about 50Hz (20ms) => 1 count = 256us => 78 counts = 20ms
 	//**************************
@@ -414,6 +428,11 @@ uint8_t AhrsCompute(){
 
 		pastCount = 0;
 		
+		accel_x /= accelCount;
+		accel_y /= accelCount;
+		accel_z /= accelCount;
+		accelCount = 0;
+		
 		//Read gyro			
 		while(twiReadMultipleBytes(gyroAdd, 0x28, gyroSplitedValues, 6) == 0);
 		AN[0] = ((gyroSplitedValues[1] << 8) | (gyroSplitedValues[0] & 0xff));
@@ -423,14 +442,7 @@ uint8_t AhrsCompute(){
 		gyro_y = SENSOR_SIGN[1] * (AN[1] - AN_OFFSET[1]);
 		gyro_z = SENSOR_SIGN[2] * (AN[2] - AN_OFFSET[2]);
 		
-		//Read accelerometer
-		while(twiReadMultipleBytes(accelAdd, 0x28, accelSplitedValues, 6) == 0);
-		AN[3] = ((accelSplitedValues[1] << 8) | (accelSplitedValues[0] & 0xff));
-		AN[4] = ((accelSplitedValues[3] << 8) | (accelSplitedValues[2] & 0xff));
-		AN[5] = ((accelSplitedValues[5] << 8) | (accelSplitedValues[4] & 0xff));
-		accel_x = SENSOR_SIGN[3] * (AN[3] - AN_OFFSET[3]);
-		accel_y = SENSOR_SIGN[4] * (AN[4] - AN_OFFSET[4]);
-		accel_z = SENSOR_SIGN[5] * (AN[5] - AN_OFFSET[5]);
+		
 		
 		if(compassCounter > 5){
 			compassCounter = 0;
@@ -454,6 +466,10 @@ uint8_t AhrsCompute(){
 		Normalize();
 		Drift_correction();
 		Euler_angles();
+		
+		accel_x = 0;
+		accel_y = 0;
+		accel_z = 0;
 		
 		return 1;
 

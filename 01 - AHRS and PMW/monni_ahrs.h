@@ -58,6 +58,8 @@
 //OUTPUTMODE=0 will print uncorrected data of the gyros (with drift)
 #define OUTPUTMODE 1
 
+//Extern values
+extern int16_t accel_x;
 
 //7 bits accelerometer's address
 static const uint8_t accelAdd = 0b0011101;
