@@ -37,3 +37,14 @@ void mCompGyroInit(){
 	while(twiWriteOneByte(gyroAdd, 0x24, 0x10) == 0); //CTRL5 => High pass filter enable
 
 }
+
+uint8_t mCompAhrsCompute(){
+	
+	//Check if X, Y and Z gyro data are available
+	uint8_t gyroStatus = twiReadOneByte(gyroAdd, 0x27);
+	if(gyroStatus & 0x08){
+		return 1;
+	}
+	
+	return 0;
+}

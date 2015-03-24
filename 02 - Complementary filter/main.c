@@ -47,9 +47,18 @@ int main(void)
 	mCompInit();
 	sei();
 	
+	int cpt = 0;
+	
     while(1)
     {
-        
+		//Invert LED every 100 times gyro data are available (should be every second because of 100Hs ODR)
+        if(mCompAhrsCompute()){
+			cpt++;
+		}
+		if(cpt == 100){
+			cpt = 0;
+			PORTD ^= 1 << PORTD0;
+		}
     }
 }
 
