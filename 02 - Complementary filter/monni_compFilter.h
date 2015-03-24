@@ -18,7 +18,7 @@
 /************************************************************************/
 void mCompInit();
 void mCompGyroInit();
-uint8_t mCompAhrsCompute();
+uint8_t mCompReadGyro();
 
 
 #endif /* MONNI_COMPFILTER_H_ */

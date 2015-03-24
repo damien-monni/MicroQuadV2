@@ -38,7 +38,7 @@ void mCompGyroInit(){
 
 }
 
-uint8_t mCompAhrsCompute(){
+uint8_t mCompReadGyro(){
 	
 	uint8_t gyroSplitedValues[6];
 	int16_t gyroValues[3];
