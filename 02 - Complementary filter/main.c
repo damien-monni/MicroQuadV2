@@ -17,15 +17,17 @@
 /* PROTOTYPES                                                           */
 /************************************************************************/
 void initLed();
+uint16_t getLoopTimeUs();
 
 /************************************************************************/
 /* Variables                                                            */
 /************************************************************************/
 volatile uint32_t t0OvfCount = 0; //Increased every 256us
-
+uint8_t previousCount = 0; //Previous loop t0OvfCount. 8 bits => max 65,536ms
+uint8_t pastCount = 0; //Number of t0OvfCount since last loop.
 
 /************************************************************************/
-/* Timer 0 overflow. Every 256us.                                                                     */
+/* Timer 0 overflow. Every 256us.                                       */
 /************************************************************************/
 ISR(TIMER0_OVF_vect){
 	t0OvfCount++;
@@ -52,7 +54,14 @@ int main(void)
     {
 		//If new gyro data has been read. Every 10ms - 100Hz.
         if(mCompReadGyro()){
-			
+			//Get loop time
+			uint16_t loopTimeUs = getLoopTimeUs();
+			if(loopTimeUs > 12000){
+				PORTD |= 1<<PORTD0;
+			}
+			else{
+				PORTD &= ~(1<<PORTD0);
+			}
 		}
     }
 }
@@ -66,4 +75,21 @@ void initLed(){
 	_delay_ms(1500); //Wait 1.5s
 	PORTD &= ~(1<<PORTD0); //Turn off LED on PORTD0
 	_delay_ms(1500); //Wait 1.5s
+}
+
+uint16_t getLoopTimeUs(){
+	
+	//Check if counter overflowed
+	uint8_t actualCount = t0OvfCount;
+	uint8_t t0 = TCNT0;
+	if(actualCount > previousCount){
+		pastCount += actualCount - previousCount;
+	}
+	else{
+		pastCount += (256 - previousCount) + actualCount;
+	}
+	previousCount = actualCount;
+	
+	return (pastCount*256) + t0;
+	
 }
