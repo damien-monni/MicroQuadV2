@@ -40,9 +40,13 @@ void mCompGyroInit(){
 
 uint8_t mCompAhrsCompute(){
 	
+	uint8_t gyroSplitedValues[6];
+	
 	//Check if X, Y and Z gyro data are available
 	uint8_t gyroStatus = twiReadOneByte(gyroAdd, 0x27);
 	if(gyroStatus & 0x08){
+		//Read gyro values
+		while(twiReadMultipleBytes(gyroAdd, 0x28, gyroSplitedValues, 6) == 0);
 		return 1;
 	}
 	
