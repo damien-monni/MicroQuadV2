@@ -22,7 +22,7 @@ uint16_t getLoopTimeUs();
 /************************************************************************/
 /* Variables                                                            */
 /************************************************************************/
-volatile uint32_t t0OvfCount = 0; //Increased every 256us
+volatile uint8_t t0OvfCount = 0; //Increased every 256us
 uint8_t previousCount = 0; //Previous loop t0OvfCount. 8 bits => max 65,536ms
 uint8_t pastCount = 0; //Number of t0OvfCount since last loop.
 
