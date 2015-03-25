@@ -53,20 +53,22 @@ int main(void)
 		//If new gyro data has been read. Every 10ms - 100Hz.
         if(mCompReadGyro()){
 			//Get loop time
-			uint16_t loopTimeUs = getLoopTimeUs();
-			float pitch = mCompCompute(loopTimeUs/1000000.0f);
+			float loopTimeMs = getLoopTimeUs() / 1000.0f;
+			float pitch = mCompCompute(loopTimeMs/1000.0f);
 			
-			//Get absolute pitch and analyse drift
+			
+			//Get absolute pitch and analyse drift => 11s for 2degrees / 20s for 4 degrees
 			if(pitch < 0){
 				pitch *= -1;
 			}
 			
-			if(pitch > 0){
+			if(pitch > 4){
 				PORTD |= 1<<PORTD0;
 			}
 			else{
 				PORTD &= ~(1<<PORTD0);
 			}
+			
 		}
     }
 }

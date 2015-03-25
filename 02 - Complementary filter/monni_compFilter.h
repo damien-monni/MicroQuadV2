@@ -5,12 +5,19 @@
  *  Author: Damien MONNI
  */ 
 
+#define F_CPU 8000000UL
 
 #ifndef MONNI_COMPFILTER_H_
 #define MONNI_COMPFILTER_H_
 
 #include <avr/io.h>
+#include <util/delay.h>
 #include "monni_i2c.h"
+
+/************************************************************************/
+/* Variables                                                            */
+/************************************************************************/
+
 
 
 /************************************************************************/
@@ -19,6 +26,7 @@
 void mCompInit();
 void mCompGyroInit();
 uint8_t mCompReadGyro();
+float mCompCompute(float dt);
 
 
 #endif /* MONNI_COMPFILTER_H_ */
