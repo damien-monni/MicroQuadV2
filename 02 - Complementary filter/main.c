@@ -54,8 +54,14 @@ int main(void)
         if(mCompReadGyro()){
 			//Get loop time
 			uint16_t loopTimeUs = getLoopTimeUs();
+			float pitch = mCompCompute(loopTimeUs/1000000.0f);
 			
-			if(loopTimeUs > 12000){
+			//Get absolute pitch and analyse drift
+			if(pitch < 0){
+				pitch *= -1;
+			}
+			
+			if(pitch > 0){
 				PORTD |= 1<<PORTD0;
 			}
 			else{

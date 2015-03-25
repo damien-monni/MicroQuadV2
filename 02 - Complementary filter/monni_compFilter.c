@@ -13,7 +13,9 @@
 const uint8_t accelAdd = 0b0011101; //7 bits accelerometer's address
 const uint8_t gyroAdd = 0b1101011; //7 bits gyro's address
 const int16_t GRAVITY = 4096; //Raw value of gravity. 8g max on 16 signed bits => 1g = 4096.
+const uint8_t gyroSensitivity = 70; //70mdps for +/2000dps full scale as write in gyro's documentation
 
+int16_t gyroValues[3]; //Raw gyro data
 
 /************************************************************************/
 /* Complementary filter init                                                                     */
@@ -41,7 +43,6 @@ void mCompGyroInit(){
 uint8_t mCompReadGyro(){
 	
 	uint8_t gyroSplitedValues[6];
-	int16_t gyroValues[3];
 	
 	//Check if X, Y and Z gyro data are available
 	uint8_t gyroStatus = twiReadOneByte(gyroAdd, 0x27);
@@ -56,4 +57,14 @@ uint8_t mCompReadGyro(){
 	}
 	
 	return 0;
+}
+
+/************************************************************************/
+/* Calculate angles
+dt = loop time in s                                                     */
+/************************************************************************/
+float mCompCompute(float dt){
+	float dps = (gyroValues[0] * gyroSensitivity) / 1000.f; //raw value in dps
+	float pitch += (dps * dt); //New angle
+	return pitch;
 }
