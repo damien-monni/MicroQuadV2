@@ -10,9 +10,9 @@
 /************************************************************************/
 /* Private variables                                                     */
 /************************************************************************/
-static const uint8_t accelAdd = 0b0011101; //7 bits accelerometer's address
-static const uint8_t gyroAdd = 0b1101011; //7 bits gyro's address
-static const int16_t GRAVITY = 4096; //Raw value of gravity. 8g max on 16 signed bits => 1g = 4096.
+const uint8_t accelAdd = 0b0011101; //7 bits accelerometer's address
+const uint8_t gyroAdd = 0b1101011; //7 bits gyro's address
+const int16_t GRAVITY = 4096; //Raw value of gravity. 8g max on 16 signed bits => 1g = 4096.
 
 
 /************************************************************************/
