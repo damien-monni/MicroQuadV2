@@ -83,10 +83,10 @@ uint16_t getLoopTimeUs(){
 	uint8_t actualCount = t0OvfCount;
 	uint8_t t0 = TCNT0;
 	if(actualCount > previousCount){
-		pastCount += actualCount - previousCount;
+		pastCount = actualCount - previousCount;
 	}
 	else{
-		pastCount += (256 - previousCount) + actualCount;
+		pastCount = (256 - previousCount) + actualCount;
 	}
 	previousCount = actualCount;
 	
