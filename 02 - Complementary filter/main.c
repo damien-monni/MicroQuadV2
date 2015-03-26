@@ -42,6 +42,7 @@ int main(void)
 	/* Initializations                                                      */
 	/************************************************************************/
 	initLed();
+	mCompAccelInit();
 	mCompGyroInit();
 	
 	mCompInit();
@@ -51,16 +52,16 @@ int main(void)
     while(1)
     {
 		//If new gyro data has been read. Every 10ms - 100Hz.
-        if(mCompReadGyro()){
+        if(mCompReadAccel()){
 			//Get loop time
 			float loopTimeMs = getLoopTimeUs() / 1000.0f;
 			float pitch = mCompCompute(loopTimeMs/1000.0f);
 			
 			
 			//Get absolute pitch and analyse drift => 11s for 2degrees / 20s for 4 degrees
-			if(pitch < 0){
+			/*if(pitch < 0){
 				pitch *= -1;
-			}
+			}*/
 			
 			if(pitch > 4){
 				PORTD |= 1<<PORTD0;

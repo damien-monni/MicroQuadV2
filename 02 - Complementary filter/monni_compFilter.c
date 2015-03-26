@@ -17,6 +17,7 @@ const uint8_t gyroSensitivity = 70; //70mdps for +/2000dps full scale as write i
 
 float pitch = 0;
 
+int16_t accelValues[3]; //Raw accel data
 int16_t gyroValues[3]; //Raw gyro data
 
 /************************************************************************/
@@ -27,6 +28,36 @@ void mCompInit(){
 	TCCR0A = 0; //Normal mode
 	TCCR0B |= 1<<CS01; //Prescaling /8 => 1 tick every us
 	TIMSK0 |= 1<<TOIE0; //Interrupt on overflow (every 256us)
+}
+
+/************************************************************************/
+/* ACCEL INIT                                                           */
+/************************************************************************/
+void mCompAccelInit(){
+	while(twiWriteOneByte(accelAdd, 0x20, 0x6F) == 0); //CTRL1 => 100Hz - BDU - XYZ Enable
+	while(twiWriteOneByte(accelAdd, 0x20, 0xC8) == 0); //CTRL2 => Anti alias BW 50Hz - +-4g
+}
+
+/************************************************************************/
+/* Read an accel value                                                  */
+/************************************************************************/
+uint8_t mCompReadAccel(){
+	
+	uint8_t accelSplitedValues[6];
+	
+	//Check if X, Y and Z gyro data are available
+	uint8_t accelStatus = twiReadOneByte(accelAdd, 0x27);
+	if(accelStatus & 0x08){
+		//Read gyro values
+		while(twiReadMultipleBytes(accelAdd, 0x28, accelSplitedValues, 6) == 0);
+		accelValues[0] = ((accelSplitedValues[1] << 8) | (accelSplitedValues[0] & 0xff));
+		accelValues[1] = ((accelSplitedValues[3] << 8) | (accelSplitedValues[2] & 0xff));
+		accelValues[2] = ((accelSplitedValues[5] << 8) | (accelSplitedValues[4] & 0xff));
+		
+		return 1;
+	}
+	
+	return 0;
 }
 
 
@@ -103,6 +134,8 @@ dt = loop time in s                                                     */
 float mCompCompute(float dt){
 	//TODO : IF GYRO > 3 ?
 	float dps = (gyroValues[0] * gyroSensitivity) / 1000.f; //raw value in dps
+	float accelX = accelValues[0];
 	pitch += (dps * dt); //New angle
+	pitch = accelX;
 	return pitch;
 }

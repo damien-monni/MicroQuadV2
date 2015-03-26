@@ -24,7 +24,9 @@
 /* Functions                                                            */
 /************************************************************************/
 void mCompInit();
+void mCompAccelInit();
 void mCompGyroInit();
+uint8_t mCompReadAccel();
 uint8_t mCompReadGyro();
 float mCompCompute(float dt);
 
