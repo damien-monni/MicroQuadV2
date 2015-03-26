@@ -20,7 +20,7 @@ float pitch = 0;
 int16_t gyroValues[3]; //Raw gyro data
 
 /************************************************************************/
-/* Complementary filter init                                                                     */
+/* Complementary filter init                                            */
 /************************************************************************/
 void mCompInit(){
 	//8-bits Timer 0 configuration
@@ -101,6 +101,7 @@ uint8_t mCompReadGyro(){
 dt = loop time in s                                                     */
 /************************************************************************/
 float mCompCompute(float dt){
+	//TODO : IF GYRO > 3 ?
 	float dps = (gyroValues[0] * gyroSensitivity) / 1000.f; //raw value in dps
 	pitch += (dps * dt); //New angle
 	return pitch;
