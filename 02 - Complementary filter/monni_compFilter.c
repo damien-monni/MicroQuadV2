@@ -35,7 +35,9 @@ void mCompInit(){
 /************************************************************************/
 void mCompAccelInit(){
 	while(twiWriteOneByte(accelAdd, 0x20, 0x6F) == 0); //CTRL1 => 100Hz - BDU - XYZ Enable
-	while(twiWriteOneByte(accelAdd, 0x20, 0xC8) == 0); //CTRL2 => Anti alias BW 50Hz - +-4g
+	while(twiWriteOneByte(accelAdd, 0x21, 0xC8) == 0); //CTRL2 => Anti alias BW 50Hz - +-4g
+	
+	
 }
 
 /************************************************************************/
