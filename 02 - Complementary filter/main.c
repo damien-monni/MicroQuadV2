@@ -48,7 +48,6 @@ int main(void)
 	mCompInit();
 	sei();
 	
-	
     while(1)
     {
 		//If new gyro data has been read. Every 10ms - 100Hz.
@@ -57,13 +56,7 @@ int main(void)
 			float loopTimeMs = getLoopTimeUs() / 1000.0f;
 			float pitch = mCompCompute(loopTimeMs/1000.0f);
 			
-			
-			//Get absolute pitch and analyse drift => 11s for 2degrees / 20s for 4 degrees
-			/*if(pitch < 0){
-				pitch *= -1;
-			}*/
-			
-			if(pitch > 4){
+			if(((pitch > 10.0f) && (pitch < 20.0f)) || ((pitch > 30.0f) && (pitch < 40.0f)) || ((pitch > 50.0f) && (pitch < 60.0f))){
 				PORTD |= 1<<PORTD0;
 			}
 			else{

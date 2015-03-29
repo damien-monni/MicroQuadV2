@@ -6,6 +6,7 @@
  */
 
 #include "monni_compFilter.h"
+#include <math.h>
 
 /************************************************************************/
 /* Private variables                                                     */
@@ -135,9 +136,15 @@ dt = loop time in s                                                     */
 /************************************************************************/
 float mCompCompute(float dt){
 	//TODO : IF GYRO > 3 ?
-	float dps = (gyroValues[0] * gyroSensitivity) / 1000.f; //raw value in dps
-	float accelX = accelValues[0];
-	pitch += (dps * dt); //New angle
-	pitch = accelX;
+	//X up increase accelX
+	//1G => 8191 LSB
+	
+	//float dps = (gyroValues[0] * gyroSensitivity) / 1000.f; //raw value in dps
+	//pitch += (dps * dt); //New angle
+	
+	
+	float accelX = (float)accelValues[0] / 8191.0f;
+	pitch = (asin(accelX) * 180) / M_PI;	
+	
 	return pitch;
 }
