@@ -87,7 +87,7 @@ uint16_t getLoopTimeUs(){
 	uint8_t t0 = TCNT0;
 	
 	if(actualCount > previousCount){
-		pastCount = actualCount - previousCount;
+		pastCount = actualCount - previousCount;	
 	}
 	else{
 		pastCount = (256 - previousCount) + actualCount;
