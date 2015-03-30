@@ -139,16 +139,18 @@ float mCompCompute(float dt){
 	//X up increase accelX
 	//1G => 8191 LSB
 	
-	//float dps = (gyroValues[0] * gyroSensitivity) / 1000.f; //raw value in dps
-	//pitch += (dps * dt); //New angle
+	float dps = (gyroValues[1] * gyroSensitivity) / 1000.f; //raw value in dps
+	pitch += (dps * dt); //New angle
 	
 	
 	float accelX = (float)accelValues[0] / 8191.0f;
 	float accelY = (float)accelValues[1] / 8191.0f;
 	float accelZ = (float)accelValues[2] / 8191.0f;
 	//pitch = (asin(accelX) * 180) / M_PI;	//Simplier function than the next one
-	pitch = atan(accelX / sqrt(pow(accelY, 2.0f) + pow(accelZ, 2.0f)));
-	pitch = (pitch * 180) / M_PI;
+	float aPitch = atan(accelX / sqrt(pow(accelY, 2.0f) + pow(accelZ, 2.0f)));
+	aPitch = (pitch * 180) / M_PI;
+	
+	pitch = (0.8f * pitch) + (0.2f * aPitch);
 	
 	return pitch;
 }
