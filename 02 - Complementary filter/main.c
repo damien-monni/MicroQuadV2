@@ -28,7 +28,7 @@ volatile uint8_t t0OvfCount = 0; //Increased every 256us
 //PMW
 //Donne le temps d'execution du programme en ms (compte au max environ 1.5 mois soit environ 49 jours)
 //MIS A JOUR SEULEMENT TOUTES LES 20MS VIA LA GENERATION PMW.
-volatile uint32_t timeFromStartMs = 0;
+//volatile uint32_t timeFromStartMs = 0;
 
 volatile uint16_t servo[4] = {2300, 2300, 2300, 2300}; //Initial speed in microseconds
 volatile int8_t channel = 1; //Controlled motor number : 1, 2, 3 or 4
@@ -55,7 +55,7 @@ ISR(TIMER1_COMPA_vect)
 		PORTD |= 1<<channel;
 		startPmwTcnt1 = timerValue;
 		OCR1A = timerValue + servo[0];
-		timeFromStartMs += 20;
+		//timeFromStartMs += 20;
 	}
 	else{
 		if(channel < 4){ //Last servo pin just goes high
@@ -93,50 +93,55 @@ int main(void)
 	
 	uint8_t readCount = 0;
 	
+	float timeMs = 0;
+	
     while(1)
     {
+		float loopTimeMs = getLoopTimeUs() / 1000.0f;
+		timeMs += loopTimeMs;
 		
-		if((timeFromStartMs > 2300) && (timeFromStartMs < 7000)){
+		if((timeMs > 2300) && (timeMs < 7000)){
 			servo[0] = 700;
 			servo[1] = 700;
 			servo[2] = 700;
 			servo[3] = 700;
 		}
 				
-		if((timeFromStartMs > 7000) && (timeFromStartMs < 15000)){
+		if((timeMs > 7000) && (timeMs < 15000)){
 			
+			//DEBUG : Works with one of the next line but not both
 			readCount += mCompReadAccel();
 			readCount += mCompReadGyro();
 			
 			//If new gyro data has been read. Every 10ms - 100Hz.
-			if(readCount == 100){
-				
-				PORTD ^= 1<<PORTD0; //Invert LED
+			if(readCount >= 2){
 				
 				readCount = 0;
+				
 				//Get loop time
-				float loopTimeMs = getLoopTimeUs() / 1000.0f;
 				float pitch = mCompCompute(loopTimeMs/1000.0f);
 				
 				servo[0] = 850 + (pitch*10.0f);
 			
-				/*if(((pitch > 10.0f) && (pitch < 20.0f)) || ((pitch > 30.0f) && (pitch < 40.0f)) || ((pitch > 50.0f) && (pitch < 60.0f))){
+				if(((pitch > 10.0f) && (pitch < 20.0f)) || ((pitch > 30.0f) && (pitch < 40.0f)) || ((pitch > 50.0f) && (pitch < 60.0f))){
 					PORTD |= 1<<PORTD0;
 				}
 				else{
 					PORTD &= ~(1<<PORTD0);
-				}*/
+				}
 			
 			}
 		}
 		
-		if(timeFromStartMs > 15000){
+		
+		if(timeMs > 15000){
 			servo[0] = 700;
 			servo[1] = 700;
 			servo[2] = 700;
 			servo[3] = 700;
 			PORTD = 0; // Turn off LED
 		}
+		
 		
     }
 }
