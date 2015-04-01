@@ -107,7 +107,7 @@ int main(void)
 			servo[3] = 700;
 		}
 				
-		if((timeMs > 7000) && (timeMs < 15000)){
+		if((timeMs > 7000) && (timeMs < 60000)){
 			
 			//DEBUG : Works with one of the next line but not both
 			readCount += mCompReadAccel();
@@ -118,23 +118,26 @@ int main(void)
 				
 				readCount = 0;
 				
-				//Get loop time
+				//PID (just P now)
+				float pitchSetpoint = 0.0f;
 				float pitch = mCompCompute(loopTimeMs/1000.0f);
+				float error = pitchSetpoint - pitch;
 				
-				servo[0] = 850 + (pitch*10.0f);
-			
-				if(((pitch > 10.0f) && (pitch < 20.0f)) || ((pitch > 30.0f) && (pitch < 40.0f)) || ((pitch > 50.0f) && (pitch < 60.0f))){
-					PORTD |= 1<<PORTD0;
+				//servo[0] = 850 + (error*20.0f); Proportionnal regulator
+				uint16_t pitchServo = servo[0] + (error * 0.2f);
+				if(pitchServo > 2300){
+					pitchServo = 2300;
 				}
-				else{
-					PORTD &= ~(1<<PORTD0);
+				if(pitchServo < 700){
+					pitchServo = 700;
 				}
+				servo[0] = pitchServo; //Integrator regulator
 			
 			}
 		}
 		
 		
-		if(timeMs > 15000){
+		if(timeMs > 60000){
 			servo[0] = 700;
 			servo[1] = 700;
 			servo[2] = 700;
