@@ -118,7 +118,7 @@ int main(void)
 				
 				readCount = 0;
 				
-				//PID (just P now)
+				//PID
 				float pitchSetpoint = 0.0f;
 				float pitch = mCompCompute(loopTimeMs/1000.0f);
 				float error = pitchSetpoint - pitch;
