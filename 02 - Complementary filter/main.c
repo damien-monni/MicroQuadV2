@@ -139,7 +139,6 @@ int main(void)
 			servo[1] = 700;
 			servo[2] = 700;
 			servo[3] = 700;
-			PORTD = 0; // Turn off LED
 		}
 		
 		

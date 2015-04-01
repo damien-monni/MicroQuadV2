@@ -148,7 +148,7 @@ float mCompCompute(float dt){
 	float accelZ = (float)accelValues[2] / 8191.0f;
 	//pitch = (asin(accelX) * 180) / M_PI;	//Simplier function than the next one
 	float aPitch = atan(accelX / sqrt(pow(accelY, 2.0f) + pow(accelZ, 2.0f)));
-	aPitch = (pitch * 180) / M_PI;
+	aPitch = (aPitch * 180) / M_PI;
 	
 	pitch = (0.8f * pitch) + (0.2f * aPitch);
 	
