@@ -78,7 +78,8 @@ int main(void)
 	/************************************************************************/
 	/* Variables                                                            */
 	/************************************************************************/
-	
+	uint8_t readCount = 0; //Controle if ready to read new sensors data values
+	float timeMs = 0; //Get loop time in milisecond
 	
 	/************************************************************************/
 	/* Initializations                                                      */
@@ -90,10 +91,6 @@ int main(void)
 	
 	mCompInit();
 	sei();
-	
-	uint8_t readCount = 0;
-	
-	float timeMs = 0;
 	
     while(1)
     {
