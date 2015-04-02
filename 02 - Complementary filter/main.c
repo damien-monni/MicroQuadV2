@@ -92,7 +92,6 @@ int main(void)
     {
 		float loopTimeMs = getLoopTimeUs() / 1000.0f;
 		timeMs += loopTimeMs;
-		pidLoopTimeMs += loopTimeMs;
 		
 		if((timeMs > 2300) && (timeMs < 7000)){
 			servo[0] = 700;
@@ -102,6 +101,8 @@ int main(void)
 		}
 				
 		if((timeMs > 7000) && (timeMs < 60000)){
+			
+			pidLoopTimeMs += loopTimeMs;
 		
 			if(isInitializing){
 				isInitializing = 0;
@@ -156,7 +157,7 @@ int main(void)
 
 uint16_t getLoopTimeUs(){
 	
-	static uint8_t previousCount = 0; //Previous loop t0OvfCount. 8 bits => max 65,536ms
+	static uint8_t previousCount = 0; //Previous loop t0OvfCount. 8 bits => max 65,536ms (8*256us)
 	uint8_t pastCount = 0;
 	
 	uint8_t actualCount = t0OvfCount;
