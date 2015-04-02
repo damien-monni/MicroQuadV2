@@ -79,7 +79,7 @@ int main(void)
 	/************************************************************************/
 	uint8_t readCount = 0; //Controle if ready to read new sensors data values
 	float timeMs = 0; //While loop time in milisecond
-	uint8_t pidLoopTime = 0;
+	uint8_t pidLoopTimeMs = 0;
 	uint8_t isInitializing = 1; //Used to know if it is initializing
 	
 	/************************************************************************/
@@ -92,6 +92,7 @@ int main(void)
     {
 		float loopTimeMs = getLoopTimeUs() / 1000.0f;
 		timeMs += loopTimeMs;
+		pidLoopTimeMs += loopTimeMs;
 		
 		if((timeMs > 2300) && (timeMs < 7000)){
 			servo[0] = 700;
@@ -117,14 +118,15 @@ int main(void)
 				if(readCount >= 2){
 					
 					readCount = 0;
+					pidLoopTimeMs = 0;
 					
 					//PID
 					float pitchSetpoint = 0.0f;
-					float pitch = mCompCompute(loopTimeMs/1000.0f);
+					float pitch = mCompCompute(pidLoopTimeMs);
 					float error = pitchSetpoint - pitch;
 					
 					//servo[0] = 850 + (error*20.0f); Proportionnal regulator
-					uint16_t pitchServo = servo[0] + (error * 0.2f); //Integrator regulator - Miss the time variable
+					uint16_t pitchServo = servo[0] + (error 1 * pidLoopTimeMs); //Integrator regulator
 					if(pitchServo > 2300){
 						pitchServo = 2300;
 					}
