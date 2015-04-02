@@ -126,7 +126,7 @@ int main(void)
 					float error = pitchSetpoint - pitch;
 					
 					//servo[0] = 850 + (error*20.0f); Proportionnal regulator
-					uint16_t pitchServo = servo[0] + (error 1 * pidLoopTimeMs); //Integrator regulator
+					uint16_t pitchServo = servo[0] + (error * 1 * pidLoopTimeMs); //Integrator regulator
 					if(pitchServo > 2300){
 						pitchServo = 2300;
 					}
