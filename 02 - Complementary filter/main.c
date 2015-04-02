@@ -78,7 +78,8 @@ int main(void)
 	/* Variables                                                            */
 	/************************************************************************/
 	uint8_t readCount = 0; //Controle if ready to read new sensors data values
-	float timeMs = 0; //Get loop time in milisecond
+	float timeMs = 0; //While loop time in milisecond
+	uint8_t pidLoopTime = 0;
 	uint8_t isInitializing = 1; //Used to know if it is initializing
 	
 	/************************************************************************/
@@ -98,24 +99,21 @@ int main(void)
 			servo[2] = 700;
 			servo[3] = 700;
 		}
-		
-			mCompAccelInit();
-			mCompGyroInit();
-			
-			mCompInit();
 				
 		if((timeMs > 7000) && (timeMs < 60000)){
 		
 			if(isInitializing){
 				isInitializing = 0;
+				mCompAccelInit();
+				mCompGyroInit();			
+				mCompInit();
 			}
 			else{
 			
-				//DEBUG : Works with one of the next line but not both
 				readCount += mCompReadAccel();
 				readCount += mCompReadGyro();
 				
-				//If new gyro data has been read. Every 10ms - 100Hz.
+				//If new gyro and accelerometer data has been read. Every 10-20msms - 100-200Hz.
 				if(readCount >= 2){
 					
 					readCount = 0;
