@@ -16,7 +16,6 @@
 /************************************************************************/
 /* PROTOTYPES                                                           */
 /************************************************************************/
-void initLed();
 uint16_t getLoopTimeUs();
 void pmwInit();
 
@@ -80,16 +79,12 @@ int main(void)
 	/************************************************************************/
 	uint8_t readCount = 0; //Controle if ready to read new sensors data values
 	float timeMs = 0; //Get loop time in milisecond
+	uint8_t isInitializing = 1; //Used to know if it is initializing
 	
 	/************************************************************************/
 	/* Initializations                                                      */
 	/************************************************************************/
-	//initLed();
 	pmwInit();
-	mCompAccelInit();
-	mCompGyroInit();
-	
-	mCompInit();
 	sei();
 	
     while(1)
@@ -103,34 +98,48 @@ int main(void)
 			servo[2] = 700;
 			servo[3] = 700;
 		}
+		
+			mCompAccelInit();
+			mCompGyroInit();
+			
+			mCompInit();
 				
 		if((timeMs > 7000) && (timeMs < 60000)){
-			
-			//DEBUG : Works with one of the next line but not both
-			readCount += mCompReadAccel();
-			readCount += mCompReadGyro();
-			
-			//If new gyro data has been read. Every 10ms - 100Hz.
-			if(readCount >= 2){
-				
-				readCount = 0;
-				
-				//PID
-				float pitchSetpoint = 0.0f;
-				float pitch = mCompCompute(loopTimeMs/1000.0f);
-				float error = pitchSetpoint - pitch;
-				
-				//servo[0] = 850 + (error*20.0f); Proportionnal regulator
-				uint16_t pitchServo = servo[0] + (error * 0.2f); //Integrator regulator - Miss the time variable
-				if(pitchServo > 2300){
-					pitchServo = 2300;
-				}
-				if(pitchServo < 700){
-					pitchServo = 700;
-				}
-				servo[0] = pitchServo;
-			
+		
+			if(isInitializing){
+				isInitializing = 0;
 			}
+			else{
+			
+				//DEBUG : Works with one of the next line but not both
+				readCount += mCompReadAccel();
+				readCount += mCompReadGyro();
+				
+				//If new gyro data has been read. Every 10ms - 100Hz.
+				if(readCount >= 2){
+					
+					readCount = 0;
+					
+					//PID
+					float pitchSetpoint = 0.0f;
+					float pitch = mCompCompute(loopTimeMs/1000.0f);
+					float error = pitchSetpoint - pitch;
+					
+					//servo[0] = 850 + (error*20.0f); Proportionnal regulator
+					uint16_t pitchServo = servo[0] + (error * 0.2f); //Integrator regulator - Miss the time variable
+					if(pitchServo > 2300){
+						pitchServo = 2300;
+					}
+					if(pitchServo < 700){
+						pitchServo = 700;
+					}
+					servo[0] = pitchServo;
+				
+				}
+				
+			}
+			
+			
 		}
 		
 		
@@ -143,17 +152,6 @@ int main(void)
 		
 		
     }
-}
-
-
-void initLed(){
-	DDRD |= 1<<DDD0; //PORTD0 as output
-	PORTD |= 1<<PORTD0;
-	
-	PORTD |= 1<<PORTD0; //Turn on LED on PORTD0
-	_delay_ms(1500); //Wait 1.5s
-	PORTD &= ~(1<<PORTD0); //Turn off LED on PORTD0
-	_delay_ms(1500); //Wait 1.5s
 }
 
 uint16_t getLoopTimeUs(){
