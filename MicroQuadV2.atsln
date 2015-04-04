@@ -5,6 +5,8 @@ Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "01 - AHRS and PMW", "01 - A
 EndProject
 Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "02 - Complementary filter", "02 - Complementary filter\02 - Complementary filter.cproj", "{EF7F9496-7C78-4BAE-9131-70867C9B7123}"
 EndProject
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "03 - Altitude with PING", "03 - Altitude with PING\03 - Altitude with PING.cproj", "{BF4AC65A-635B-4E87-A272-A1AE23D9DBFC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|AVR = Debug|AVR
@@ -19,6 +21,10 @@ Global
 		{EF7F9496-7C78-4BAE-9131-70867C9B7123}.Debug|AVR.Build.0 = Debug|AVR
 		{EF7F9496-7C78-4BAE-9131-70867C9B7123}.Release|AVR.ActiveCfg = Release|AVR
 		{EF7F9496-7C78-4BAE-9131-70867C9B7123}.Release|AVR.Build.0 = Release|AVR
+		{BF4AC65A-635B-4E87-A272-A1AE23D9DBFC}.Debug|AVR.ActiveCfg = Debug|AVR
+		{BF4AC65A-635B-4E87-A272-A1AE23D9DBFC}.Debug|AVR.Build.0 = Debug|AVR
+		{BF4AC65A-635B-4E87-A272-A1AE23D9DBFC}.Release|AVR.ActiveCfg = Release|AVR
+		{BF4AC65A-635B-4E87-A272-A1AE23D9DBFC}.Release|AVR.Build.0 = Release|AVR
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
