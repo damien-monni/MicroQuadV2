@@ -79,7 +79,7 @@ int main(void)
 	/************************************************************************/
 	uint8_t readCount = 0; //Controle if ready to read new sensors data values
 	float timeMs = 0; //While loop time in milisecond
-	uint8_t pidLoopTimeMs = 0;
+	float pidLoopTimeMs = 0;
 	uint8_t isInitializing = 1; //Used to know if it is initializing
 	
 	/************************************************************************/
@@ -98,13 +98,15 @@ int main(void)
 			servo[1] = 700;
 			servo[2] = 700;
 			servo[3] = 700;
+			PORTD |= 1>>PORTD0;
 		}
 				
-		if((timeMs > 7000) && (timeMs < 60000)){
+		if((timeMs > 7000) && (timeMs < 30000)){
 			
 			pidLoopTimeMs += loopTimeMs;
 		
-			if(isInitializing){
+			if(isInitializing == 0){
+				PORTD &= ~(1<<PORTD0);
 				isInitializing = 0;
 				mCompAccelInit();
 				mCompGyroInit();			
@@ -115,26 +117,30 @@ int main(void)
 				readCount += mCompReadAccel();
 				readCount += mCompReadGyro();
 				
+				PORTD ^= 1<<PORTD0;
+				
 				//If new gyro and accelerometer data has been read. Every 10-20msms - 100-200Hz.
 				if(readCount >= 2){
 					
 					readCount = 0;
-					pidLoopTimeMs = 0;
 					
 					//PID
 					float pitchSetpoint = 0.0f;
-					float pitch = mCompCompute(pidLoopTimeMs);
+					float pitch = mCompCompute(pidLoopTimeMs/1000.0f);
 					float error = pitchSetpoint - pitch;
 					
 					//servo[0] = 850 + (error*20.0f); Proportionnal regulator
-					uint16_t pitchServo = servo[0] + (error * 1 * pidLoopTimeMs); //Integrator regulator
+					uint16_t pitchServo = servo[0] + (error * 1 * (pidLoopTimeMs/10.0f)); //Integrator regulator
 					if(pitchServo > 2300){
 						pitchServo = 2300;
 					}
 					if(pitchServo < 700){
 						pitchServo = 700;
 					}
+					
 					servo[0] = pitchServo;
+					
+					pidLoopTimeMs = 0;
 				
 				}
 				
@@ -144,7 +150,7 @@ int main(void)
 		}
 		
 		
-		if(timeMs > 60000){
+		if(timeMs > 30000){
 			servo[0] = 700;
 			servo[1] = 700;
 			servo[2] = 700;
