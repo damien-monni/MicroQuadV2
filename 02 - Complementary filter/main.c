@@ -86,6 +86,8 @@ int main(void)
 	/* Initializations                                                      */
 	/************************************************************************/
 	pmwInit();
+	
+	
 	sei();
 	
     while(1)
@@ -98,10 +100,15 @@ int main(void)
 			servo[1] = 700;
 			servo[2] = 700;
 			servo[3] = 700;
-			PORTD |= 1>>PORTD0;
+			PORTD |= 1<<PORTD0;
 		}
 				
-		if((timeMs > 7000) && (timeMs < 30000)){
+		if((timeMs > 7000) && (timeMs < 12000)){
+			
+			/*servo[0] = 1300;
+			servo[1] = 1300;
+			servo[2] = 1300;
+			servo[3] = 1300;*/
 			
 			pidLoopTimeMs += loopTimeMs;
 		
@@ -139,6 +146,9 @@ int main(void)
 					}
 					
 					servo[0] = pitchServo;
+					servo[1] = 1200;
+					servo[2] = (uint16_t)1200;
+					servo[3] = 1200;
 					
 					pidLoopTimeMs = 0;
 				
@@ -150,7 +160,7 @@ int main(void)
 		}
 		
 		
-		if(timeMs > 30000){
+		if(timeMs > 12000){
 			servo[0] = 700;
 			servo[1] = 700;
 			servo[2] = 700;
